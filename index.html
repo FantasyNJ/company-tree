@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        .wrap{
+            position: absolute;
+            /*left: 50%;*/
+            /*transform: translate(-50%);*/
+            left: 0;
+            top: 0;
+            white-space: nowrap;
+        }
+        .u-list{
+            text-align: center;
+            margin-top: 40px;
+            position: relative;
+        }
+        .u-list .before{
+            position: absolute;
+            height: 2px;
+            top: -22px;
+            background: #000;
+        }
+
+        .list{
+            display: inline-block;
+            vertical-align: top;
+        }
+        .list-name{
+            display: inline-block;
+            padding: 5px 10px;
+            border: 2px solid #000;
+            border-radius: 5px;
+            position: relative;
+        }
+        .list-name .after{
+            position: absolute;
+            width: 2px;
+            height: 20px;
+            background: #000;
+            bottom: -22px;
+            left: 50%;
+            margin-left: -1px;
+        }
+        .list-name:before{
+            content: ' ';
+            width: 2px;
+            height: 20px;
+            background: #000;
+            position: absolute;
+            top: -22px;
+            left: 50%;
+            margin-left: -1px;
+        }
+        .list+.list{
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="wrap"></div>
+<script src="jquery-3.1.1.js"></script>
+<script>
+    var data = [{
+        name: '公司',
+        children:[{
+            name: '部门1',
+            children: [
+                    {
+                name: '部门1-1',
+                children: [{
+                    name: '部门1-1-1',
+                    children: []
+                },{
+                    name: '部门1-1-2',
+                    children: []
+                },{
+                    name: '部门1-1-3',
+                    children: []
+                }]
+                },
+                {
+                    name: '部门1-2',
+                    children: [{
+                        name: '部门1-2-1',
+                        children:[]
+                    }]
+                }
+                ]
+        },
+            {
+                name: '部门2',
+                children: [
+                        {
+                    name: 'OA',
+                    children: []
+                },
+                    {
+                        name: 'FE',
+                        children: []
+                    },
+                    {
+                        name: '部门2-3',
+                        children: []
+                    }
+                    ]
+            },
+            {
+                name: '部门3',
+                children: [
+                        {
+                    name: '部门3-1',
+                    children: []
+                },
+                    {
+                        name: '部门3-2',
+                        children: []
+                    },
+                    {
+                        name: '部门3-3',
+                        children: [{
+                            name: '部门3-3-1',
+                            children: []
+                        },
+                            {
+                                name: '部门3-3-1',
+                                children: []
+                            },
+                            {
+                                name: '部门3-3-1',
+                                children: []
+                            }]
+                    }
+                    ]
+            }]
+    }];
+//$(function(){
+//    var wrap = $('.wrap');
+//    function fn(arr){
+//        if(arr.length === 0){
+//            return '';
+//        }
+//        var sHtml = '<div class="u-list"><div class="before"></div>';
+//        for(var i = 0; i < arr.length; i++){
+//            sHtml += '<div class="list"><div class="list-name">'+arr[i].name;
+//            if(arr[i].children.length !== 0){
+//                sHtml += '<div class="after"></div></div>';
+//            }else{
+//                sHtml += '</div>';
+//            }
+//            sHtml += fn(arr[i].children);
+//            sHtml += '</div>';
+//        }
+//        sHtml += '</div>';
+//        return sHtml;
+//    }
+//    wrap.html(fn(data));
+//    var pUList = $('.u-list').eq(0);
+//    console.log(pUList)
+//    pUList.css('overflow', 'hidden');
+//
+//    var uList = $('.wrap .u-list');
+//    uList.each(function(index, item){
+//        console.log($(item))
+//        var before = $(item).children().filter('.before');
+//        var list = $(item).children().filter('.list');
+//        var leftElem = list.eq(0).children().filter('.list-name');
+//        var rightElem = list.eq(list.length - 1).children().filter('.list-name');
+//        var left = leftElem.position().left + leftElem.outerWidth()/2 ;
+//        var right = rightElem.position().left + rightElem.outerWidth()/2 ;
+//        var width = 2;
+//        before.css('width', right - left + width);
+//        before.css('left', leftElem.position().left + leftElem.outerWidth()/2 - width/2);
+//    })
+//})
+
+    function CreateTree(elem, data){
+        this.wrap = $(elem);
+        this.data = data;
+    }
+    CreateTree.prototype.create = function(){
+        function fn(arr){
+            if(arr.length === 0){
+                return '';
+            }
+            var sHtml = '<div class="u-list"><div class="before"></div>';
+            for(var i = 0; i < arr.length; i++){
+                sHtml += '<div class="list"><div class="list-name">'+arr[i].name;
+                if(arr[i].children.length !== 0){
+                    console.log(arr[i].children)
+                    sHtml += '<div class="after"></div></div>';
+                }else{
+                    sHtml += '</div>';
+                }
+                sHtml += fn(arr[i].children);
+                sHtml += '</div>';
+            }
+            sHtml += '</div>';
+            return sHtml;
+        }
+        this.wrap.html(fn(this.data));
+        var pUList = this.wrap.find('.u-list').eq(0);
+        pUList.css('overflow-y', 'hidden');
+
+        var uList = this.wrap.find('.u-list');
+        resetLine();
+        $(window).resize(resetLine);
+        function resetLine() {
+            uList.each(function(index, item){
+                var before = $(item).children().filter('.before');
+                var list = $(item).children().filter('.list');
+                var leftElem = list.eq(0).children().filter('.list-name');
+                var rightElem = list.eq(list.length - 1).children().filter('.list-name');
+                var left = leftElem.position().left + leftElem.outerWidth()/2 ;
+                var right = rightElem.position().left + rightElem.outerWidth()/2 ;
+                var width = 2;
+                before.css('width', right - left + width);
+                before.css('left', leftElem.position().left + leftElem.outerWidth()/2 - width/2);
+            })
+        }
+        return this;
+    }
+    CreateTree.prototype.drag = function(){
+        this.wrap.css('cursor', 'pointer');
+        this.wrap.on('mousedown', function (e) {
+            console.log(this);
+            var disX = e.pageX - $(this).position().left;
+            var disY = e.pageY - $(this).position().top;
+            $(this).on('mousemove', function(e){
+                var X = e.pageX - disX;
+                var Y = e.pageY - disY;
+                console.log(X, Y);
+                $(this).css('left', X);
+                $(this).css('top', Y);
+            });
+            $(this).on('mouseup', function(){
+                $(this).unbind('mousemove');
+                $(this).unbind('mouseup');
+            });
+            return false;
+        })
+        return this;
+    }
+    var wrap = document.querySelector('.wrap');
+    var g = new CreateTree(wrap, data);
+    g.create().drag();
+</script>
+</body>
+</html>
