@@ -189,7 +189,6 @@
             for(var i = 0; i < arr.length; i++){
                 sHtml += '<div class="list"><div class="list-name">'+arr[i].name;
                 if(arr[i].children.length !== 0){
-                    console.log(arr[i].children)
                     sHtml += '<div class="after"></div></div>';
                 }else{
                     sHtml += '</div>';
@@ -225,13 +224,11 @@
     CreateTree.prototype.drag = function(){
         this.wrap.css('cursor', 'pointer');
         this.wrap.on('mousedown', function (e) {
-            console.log(this);
             var disX = e.pageX - $(this).position().left;
             var disY = e.pageY - $(this).position().top;
             $(this).on('mousemove', function(e){
                 var X = e.pageX - disX;
                 var Y = e.pageY - disY;
-                console.log(X, Y);
                 $(this).css('left', X);
                 $(this).css('top', Y);
             });
