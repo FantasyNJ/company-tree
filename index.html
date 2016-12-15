@@ -180,6 +180,7 @@
         this.wrap = $(elem);
         this.data = data;
     }
+    //创建架构
     CreateTree.prototype.create = function(){
         function fn(arr){
             if(arr.length === 0){
@@ -204,9 +205,13 @@
         pUList.css('overflow-y', 'hidden');
 
         var uList = this.wrap.find('.u-list');
-        resetLine();
-        $(window).resize(resetLine);
+        resetLine.call(this);
+        $(window).resize(resetLine.bind(this));
+
         function resetLine() {
+            //获取伪元素宽度
+            var elem = this.wrap.find('.list-name')[0];
+            var width = parseFloat(window.getComputedStyle(elem, ':before').getPropertyValue('width'));
             uList.each(function(index, item){
                 var before = $(item).children().filter('.before');
                 var list = $(item).children().filter('.list');
@@ -214,13 +219,13 @@
                 var rightElem = list.eq(list.length - 1).children().filter('.list-name');
                 var left = leftElem.position().left + leftElem.outerWidth()/2 ;
                 var right = rightElem.position().left + rightElem.outerWidth()/2 ;
-                var width = 2;
                 before.css('width', right - left + width);
                 before.css('left', leftElem.position().left + leftElem.outerWidth()/2 - width/2);
             })
         }
         return this;
     }
+    //拖拽架构
     CreateTree.prototype.drag = function(){
         this.wrap.css('cursor', 'pointer');
         this.wrap.on('mousedown', function (e) {
